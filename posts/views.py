@@ -30,11 +30,15 @@ def group_posts(request, slug):
 
 @login_required
 def add_comment(request, username, post_id):
-    post = Post.objects.get(id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            Comment.objects.create(author=request.user, text=form.cleaned_data['text'], post=post)
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            # Comment.objects.create(author=request.user, text=form.cleaned_data['text'], post=post)
             return redirect(f'/{username}/{post_id}')
             # return render(request, 'post.html', {'username': username, 'post_id': post_id})
         else:
@@ -51,11 +55,6 @@ def new_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST or None, files=request.FILES or None)
         if form.is_valid():
-            # form.text = form.cleaned_data['text']
-            # form.group = form.cleaned_data['group']
-            # form.image = form.cleaned_data['image']
-            # form.author = request.user
-            # form.save(commit=True)
             post = form.save(commit=False)
             post.image = form.cleaned_data['image']
             post.author = request.user
@@ -97,7 +96,7 @@ def post_edit(request, username, post_id):
 
 
 def profile(request, username):
-    author = User.objects.get(username=username)
+    author = get_object_or_404(User, username=username)
     posts = Post.objects.filter(author=author).all()
     post_count = Post.objects.filter(author=author).count()
     paginator = Paginator(posts, 10)
