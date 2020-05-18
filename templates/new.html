@@ -1,0 +1,39 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% block title %}{{button_ed|default:'Добавление поста'}}{% endblock %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
+    <input type="submit" value="{{button_save| default:'Опубликовать'}}" />
+    {% if form.errors %}
+	<div id="errors">
+		<div class="inner">
+			<p>У вас ошибка в публикации:</p>
+			{{ form.non_field_errors }}
+			<ul>
+				{% for field in form %}
+					{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	{% endif %}
+</form>
+
+</body>
+</html>
+{% endblock %}
+
