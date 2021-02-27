@@ -2,6 +2,7 @@
 env
 venv
 
+
 __pycache__/
 *.py[cod]
 
@@ -16,5 +17,7 @@ __pycache__/
 static/
 posts/static/
 media
+posts/migrations
+users/migrations
 
 db.sqlite3
